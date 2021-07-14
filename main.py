@@ -1,16 +1,29 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+import threading
+import time
+from queue import Queue
 
 
-# Press the green button in the gutter to run the script.
+def job(I, q):
+    for i in range(len(I)):
+        I[i] = I[i] ** 2
+    q.put(I)
+
+
+def multithreading(data):
+    q = Queue()
+    threads = []
+    for i in range(4):
+        t = threading.Thread(target=job, args=(data[i], q))
+        t.start()
+        threads.append(t)
+    for thread in threads:
+        thread.join()
+    results = []
+    for _ in range(4):
+        results.append(q.get())
+    print(results)
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    data = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
+    multithreading(data)
